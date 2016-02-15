@@ -2,6 +2,14 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 def sonatypeRepositoryUrl
+
+if (!hasProperty('nexusUsername')) {
+    ext.nexusUsername = ''
+}
+if (!hasProperty('nexusPassword')) {
+    ext.nexusPassword = ''
+}
+
 if (isReleaseBuild()) {
     println 'RELEASE BUILD'
     sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
