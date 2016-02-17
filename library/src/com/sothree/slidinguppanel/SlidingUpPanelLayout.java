@@ -582,6 +582,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     /**
      * Sets the current scrollable view helper. See ScrollableViewHelper description for details.
+     *
      * @param helper
      */
     public void setScrollableViewHelper(ScrollableViewHelper helper) {
@@ -915,7 +916,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 if (!isViewUnder(mDragView, (int) x, (int) y)) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
-                    return false;
+                    return super.onInterceptTouchEvent(ev);
                 }
                 break;
             }
@@ -949,7 +950,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent ev) {
-        if (!isEnabled() || !isTouchEnabled()) {
+        final float x = ev.getX();
+        final float y = ev.getY();
+        if (!isEnabled() || !isTouchEnabled() || !isViewUnder(mDragView, (int) x, (int) y)) {
             return super.onTouchEvent(ev);
         }
         try {
@@ -975,6 +978,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (action == MotionEvent.ACTION_DOWN) {
             mIsScrollableViewHandlingTouch = false;
             mPrevMotionY = y;
+            final float x = ev.getX();
+            if (!isViewUnder(mDragView, (int) x, (int) y)) {
+                return super.dispatchTouchEvent(ev);
+            }
         } else if (action == MotionEvent.ACTION_MOVE) {
             float dy = y - mPrevMotionY;
             mPrevMotionY = y;
