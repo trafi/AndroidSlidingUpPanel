@@ -26,6 +26,9 @@ import android.view.animation.Interpolator;
 import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.sothree.slidinguppanel.library.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SlidingUpPanelLayout extends ViewGroup {
 
     private static final String TAG = SlidingUpPanelLayout.class.getSimpleName();
@@ -209,7 +212,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private float mInitialMotionY;
     private boolean mIsScrollableViewHandlingTouch = false;
 
-    private PanelSlideListener mPanelSlideListener;
+    private List<PanelSlideListener> mPanelSlideListeners = new ArrayList<>();
+    private View.OnClickListener mFadeOnClickListener;
 
     private final ViewDragHelper mDragHelper;
 
@@ -409,7 +413,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public void setCoveredFadeColor(int color) {
         mCoveredFadeColor = color;
-        invalidate();
+        requestLayout();
     }
 
     /**
@@ -531,12 +535,31 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     /**
-     * Sets the panel slide listener
+     * Adds a panel slide listener
      *
      * @param listener
      */
-    public void setPanelSlideListener(PanelSlideListener listener) {
-        mPanelSlideListener = listener;
+    public void addPanelSlideListener(PanelSlideListener listener) {
+        mPanelSlideListeners.add(listener);
+    }
+
+    /**
+     * Removes a panel slide listener
+     *
+     * @param listener
+     */
+    public void removePanelSlideListener(PanelSlideListener listener) {
+        mPanelSlideListeners.remove(listener);
+    }
+
+    /**
+     * Provides an on click for the portion of the main view that is dimmed. The listener is not
+     * triggered if the panel is in a collapsed or a hidden position. If the on click listener is
+     * not provided, the clicks on the dimmed area are passed through to the main layout.
+     * @param listener
+     */
+    public void setFadeOnClickListener(View.OnClickListener listener) {
+        mFadeOnClickListener = listener;
     }
 
     /**
@@ -610,6 +633,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public void setAnchorPoint(float anchorPoint) {
         if (anchorPoint > 0 && anchorPoint <= 1) {
             mAnchorPoint = anchorPoint;
+            mFirstLayout = true;
+            requestLayout();
         }
     }
 
@@ -655,35 +680,35 @@ public class SlidingUpPanelLayout extends ViewGroup {
     }
 
     void dispatchOnPanelSlide(View panel) {
-        if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelSlide(panel, mSlideOffset);
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onPanelSlide(panel, mSlideOffset);
         }
     }
 
     void dispatchOnPanelExpanded(View panel) {
-        if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelExpanded(panel);
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onPanelExpanded(panel);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
 
     void dispatchOnPanelCollapsed(View panel) {
-        if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelCollapsed(panel);
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onPanelCollapsed(panel);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
 
     void dispatchOnPanelAnchored(View panel) {
-        if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelAnchored(panel);
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onPanelAnchored(panel);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
 
     void dispatchOnPanelHidden(View panel) {
-        if (mPanelSlideListener != null) {
-            mPanelSlideListener.onPanelHidden(panel);
+        for (PanelSlideListener l : mPanelSlideListeners) {
+            l.onPanelHidden(panel);
         }
         sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
     }
@@ -919,6 +944,9 @@ public class SlidingUpPanelLayout extends ViewGroup {
         final int action = MotionEventCompat.getActionMasked(ev);
         final float x = ev.getX();
         final float y = ev.getY();
+        final float adx = Math.abs(x - mInitialMotionX);
+        final float ady = Math.abs(y - mInitialMotionY);
+        final int dragSlop = mDragHelper.getTouchSlop();
 
         switch (action) {
             case MotionEvent.ACTION_DOWN: {
@@ -953,6 +981,14 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 // Added to make scrollable views work (tokudu)
                 if (mDragHelper.isDragging()) {
                     mDragHelper.processTouchEvent(ev);
+                    return true;
+                }
+                // Check if this was a click on the faded part of the screen, and fire off the listener if there is one.
+                if (ady <= dragSlop
+                        && adx <= dragSlop
+                        && mSlideOffset >=0 && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY) && mFadeOnClickListener != null) {
+                    playSoundEffect(android.view.SoundEffectConstants.CLICK);
+                    mFadeOnClickListener.onClick(this);
                     return true;
                 }
                 break;
@@ -1049,10 +1085,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mIsScrollableViewHandlingTouch = true;
                 return super.dispatchTouchEvent(ev);
             }
-        } else if (action == MotionEvent.ACTION_UP && mIsScrollableViewHandlingTouch) {
+        } else if (action == MotionEvent.ACTION_UP) {
             // If the scrollable view was handling the touch and we receive an up
             // we want to clear any previous dragging state so we don't intercept a touch stream accidentally
-            mDragHelper.setDragState(ViewDragHelper.STATE_IDLE);
+            if (mIsScrollableViewHandlingTouch) {
+                mDragHelper.setDragState(ViewDragHelper.STATE_IDLE);
+            }
         }
 
         // In all other cases, just let the default behavior take over.
@@ -1262,7 +1300,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         super.draw(c);
 
         // draw the shadow
-        if (mShadowDrawable != null) {
+        if (mShadowDrawable != null && mSlideableView != null) {
             final int right = mSlideableView.getRight();
             final int top;
             final int bottom;

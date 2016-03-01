@@ -1,12 +1,12 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.sothree.slidinguppanel/library/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.sothree.slidinguppanel/library)
-
+[![Badge](http://www.libtastic.com/static/osbadges/30.png)](http://www.libtastic.com/technology/30/)
 
 Android Sliding Up Panel
 =========================
 
 This library provides a simple way to add a draggable sliding up panel (popularized by Google Music, Google Maps and Rdio) to your Android application. Umano Team <3 Open Source.
 
-As seen in [Umano](http://umanoapp.com) [Android app](https://play.google.com/store/apps/details?id=com.sothree.umano):
+As seen in Umano Android App (now acquired by Dropbox):
 
 ![SlidingUpPanelLayout](https://raw.github.com/umano/AndroidSlidingUpPanelDemo/master/slidinguppanel.png)
 
@@ -139,7 +139,7 @@ If you have an awesome pull request, send it over!
 
 * 3.2.1
   * Add support for `umanoScrollInterpolator`
-  * Add upport for percentage-based sliding panel height using `layout_weight` attribute
+  * Add support for percentage-based sliding panel height using `layout_weight` attribute
   * Add `ScrollableViewHelper` to allow users extend support for new types of scrollable views.
 * 3.2.0
   * Rename `umanoParalaxOffset` to `umanoParallaxOffset`
