@@ -592,11 +592,9 @@ public class ViewDragHelper {
             throw new IllegalStateException("Cannot settleCapturedViewAt outside of a call to " +
                     "Callback#onViewReleased");
         }
-        return mIsAutoPeekingEnabled ?
-
-         forceSettleCapturedViewAt(finalLeft, finalTop,
+        return forceSettleCapturedViewAt(finalLeft, finalTop,
                 (int) VelocityTrackerCompat.getXVelocity(mVelocityTracker, mActivePointerId),
-                (int) VelocityTrackerCompat.getYVelocity(mVelocityTracker, mActivePointerId)):false;
+                (int) VelocityTrackerCompat.getYVelocity(mVelocityTracker, mActivePointerId));
     }
 
     /**
@@ -609,6 +607,8 @@ public class ViewDragHelper {
      * @return true if animation should continue through {@link #continueSettling(boolean)} calls
      */
     private boolean forceSettleCapturedViewAt(int finalLeft, int finalTop, int xvel, int yvel) {
+        if (Math.abs(yvel) < mMinVelocity)
+            return false;
         final int startLeft = mCapturedView.getLeft();
         final int startTop = mCapturedView.getTop();
         final int dx = finalLeft - startLeft;
