@@ -962,10 +962,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             case MotionEvent.ACTION_MOVE: {
-                final float adx = Math.abs(x - mInitialMotionX);
-                final float ady = Math.abs(y - mInitialMotionY);
-                final int dragSlop = mDragHelper.getTouchSlop();
-
                 if ((ady > dragSlop && adx > ady)) {
                     mDragHelper.cancel();
                     mIsUnableToDrag = true;
