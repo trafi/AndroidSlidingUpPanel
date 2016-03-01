@@ -11,6 +11,7 @@
         <attr name="umanoScrollableView" format="reference" />
         <attr name="umanoOverlay" format="boolean"/>
         <attr name="umanoClipPanel" format="boolean"/>
+        <attr name="umanoAutoPeekingEnabled" format="boolean"/>
         <attr name="umanoAnchorPoint" format="float" />
         <attr name="umanoInitialState" format="enum">
             <enum name="expanded" value="0" />

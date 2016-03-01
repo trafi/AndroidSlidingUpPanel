@@ -15,6 +15,7 @@
         sothree:umanoParallaxOffset="100dp"
         sothree:umanoDragView="@+id/dragView"
         sothree:umanoOverlay="true"
+        sothree:umanoAutoPeekingEnabled="true"
         sothree:umanoScrollableView="@+id/list">
 
         <!-- MAIN CONTENT -->

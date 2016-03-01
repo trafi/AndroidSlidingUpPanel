@@ -73,6 +73,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private static final int[] DEFAULT_ATTRS = new int[]{
             android.R.attr.gravity
     };
+    private boolean mIsAutoPeekingEnabled = true;
 
     /**
      * Minimum velocity that will be detected as a fling
@@ -336,6 +337,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
                 mSlideState = PanelState.values()[ta.getInt(R.styleable.SlidingUpPanelLayout_umanoInitialState, DEFAULT_SLIDE_STATE.ordinal())];
 
+                mIsAutoPeekingEnabled = ta.getBoolean(R.styleable.SlidingUpPanelLayout_umanoAutoPeekingEnabled, true);
+
                 int interpolatorResId = ta.getResourceId(R.styleable.SlidingUpPanelLayout_umanoScrollInterpolator, -1);
                 if (interpolatorResId != -1) {
                     scrollerInterpolator = AnimationUtils.loadInterpolator(context, interpolatorResId);
@@ -368,7 +371,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         setWillNotDraw(false);
 
-        mDragHelper = ViewDragHelper.create(this, 0.5f, scrollerInterpolator, new DragHelperCallback());
+        mDragHelper = ViewDragHelper.create(this, 0.5f, scrollerInterpolator, new DragHelperCallback(), mIsAutoPeekingEnabled);
         mDragHelper.setMinVelocity(mMinFlingVelocity * density);
 
         mIsTouchEnabled = true;
@@ -423,6 +426,15 @@ public class SlidingUpPanelLayout extends ViewGroup {
      */
     public void setTouchEnabled(boolean enabled) {
         mIsTouchEnabled = enabled;
+    }
+
+    /**
+     * Set auto peeking enabled flag
+     *
+     * @param enabled flag value
+     */
+    public void setAutoPeekingEnabled(boolean enabled) {
+        mIsAutoPeekingEnabled = enabled;
     }
 
     public boolean isTouchEnabled() {

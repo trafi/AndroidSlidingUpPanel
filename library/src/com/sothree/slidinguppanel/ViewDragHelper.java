@@ -139,6 +139,8 @@ public class ViewDragHelper {
 
     private final ViewGroup mParentView;
 
+    private boolean mIsAutoPeekingEnabled = true;
+
     /**
      * A Callback is used as a communication channel with the ViewDragHelper back to the
      * parent view using it. <code>on*</code>methods are invoked on siginficant events and several
@@ -385,8 +387,9 @@ public class ViewDragHelper {
      * @param cb Callback to provide information and receive events
      * @return a new ViewDragHelper instance
      */
-    public static ViewDragHelper create(ViewGroup forParent, float sensitivity, Interpolator interpolator, Callback cb) {
+    public static ViewDragHelper create(ViewGroup forParent, float sensitivity, Interpolator interpolator, Callback cb, boolean mIsAutoPeekingEnabled) {
         final ViewDragHelper helper = create(forParent, interpolator, cb);
+        helper.mIsAutoPeekingEnabled = mIsAutoPeekingEnabled;
         helper.mTouchSlop = (int) (helper.mTouchSlop * (1 / sensitivity));
         return helper;
     }
@@ -589,10 +592,11 @@ public class ViewDragHelper {
             throw new IllegalStateException("Cannot settleCapturedViewAt outside of a call to " +
                     "Callback#onViewReleased");
         }
+        return mIsAutoPeekingEnabled ?
 
-        return forceSettleCapturedViewAt(finalLeft, finalTop,
+         forceSettleCapturedViewAt(finalLeft, finalTop,
                 (int) VelocityTrackerCompat.getXVelocity(mVelocityTracker, mActivePointerId),
-                (int) VelocityTrackerCompat.getYVelocity(mVelocityTracker, mActivePointerId));
+                (int) VelocityTrackerCompat.getYVelocity(mVelocityTracker, mActivePointerId)):false;
     }
 
     /**
@@ -753,7 +757,7 @@ public class ViewDragHelper {
             final int y = mScroller.getCurrY();
             final int dx = x - mCapturedView.getLeft();
             final int dy = y - mCapturedView.getTop();
-            
+
             if(!keepGoing && dy != 0) { //fix #525
                 //Invalid drag state
                 mCapturedView.setTop(0);
