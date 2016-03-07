@@ -556,6 +556,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
      * Provides an on click for the portion of the main view that is dimmed. The listener is not
      * triggered if the panel is in a collapsed or a hidden position. If the on click listener is
      * not provided, the clicks on the dimmed area are passed through to the main layout.
+     *
      * @param listener
      */
     public void setFadeOnClickListener(View.OnClickListener listener) {
@@ -982,7 +983,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 // Check if this was a click on the faded part of the screen, and fire off the listener if there is one.
                 if (ady <= dragSlop
                         && adx <= dragSlop
-                        && mSlideOffset >=0 && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY) && mFadeOnClickListener != null) {
+                        && mSlideOffset >= 0 && !isViewUnder(mSlideableView, (int) mInitialMotionX, (int) mInitialMotionY) && mFadeOnClickListener != null) {
                     playSoundEffect(android.view.SoundEffectConstants.CLICK);
                     mFadeOnClickListener.onClick(this);
                     return true;
@@ -1372,6 +1373,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         Parcelable superState = super.onSaveInstanceState();
 
         SavedState ss = new SavedState(superState);
+        ss.mSlideOffset = mSlideOffset;
         if (mSlideState != PanelState.DRAGGING) {
             ss.mSlideState = mSlideState;
         } else {
@@ -1385,6 +1387,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         SavedState ss = (SavedState) state;
         super.onRestoreInstanceState(ss.getSuperState());
         mSlideState = ss.mSlideState != null ? ss.mSlideState : DEFAULT_SLIDE_STATE;
+        mSlideOffset = ss.mSlideOffset;
     }
 
     private class DragHelperCallback extends ViewDragHelper.Callback {
@@ -1535,6 +1538,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     static class SavedState extends BaseSavedState {
         PanelState mSlideState;
+        float mSlideOffset;
 
         SavedState(Parcelable superState) {
             super(superState);
@@ -1542,6 +1546,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         private SavedState(Parcel in) {
             super(in);
+            mSlideOffset = in.readFloat();
             String panelStateString = in.readString();
             try {
                 mSlideState = panelStateString != null ? Enum.valueOf(PanelState.class, panelStateString)
@@ -1554,6 +1559,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         @Override
         public void writeToParcel(Parcel out, int flags) {
             super.writeToParcel(out, flags);
+            out.writeFloat(mSlideOffset);
             out.writeString(mSlideState == null ? null : mSlideState.toString());
         }
 
