@@ -4,19 +4,13 @@
 Android Sliding Up Panel
 =========================
 
-This library provides a simple way to add a draggable sliding up panel (popularized by Google Music, Google Maps and Rdio) to your Android application. Umano Team <3 Open Source.
+This library provides a simple way to add a draggable sliding up panel (popularized by Google Music and Google Maps) to your Android application.
 
 As seen in Umano Android App (now acquired by Dropbox):
 
 ![SlidingUpPanelLayout](https://raw.github.com/umano/AndroidSlidingUpPanelDemo/master/slidinguppanel.png)
 
 ### Importing the library
-
-#### Eclipse 
-
-Download the [latest release](https://github.com/umano/AndroidSlidingUpPanel/releases) and include the `library` project as a dependency in Eclipse.
-
-#### Android Studio 
 
 Simply add the following dependency to your `build.gradle` file to use the latest version:
 
@@ -25,7 +19,7 @@ dependencies {
     repositories {
         mavenCentral()
     }
-    compile 'com.sothree.slidinguppanel:library:3.2.1'
+    compile 'com.sothree.slidinguppanel:library:3.3.0'
 }
 ```
 
@@ -137,6 +131,10 @@ If you have an awesome pull request, send it over!
 
 ### Changelog
 
+* 3.3.0
+  * You can now set a `FadeOnClickListener`, for when the faded area of the main content is clicked.
+  * `PanelSlideListener` has a new format (multiple of them can be set now
+  * Fixed the setTouchEnabled bug
 * 3.2.1
   * Add support for `umanoScrollInterpolator`
   * Add support for percentage-based sliding panel height using `layout_weight` attribute
