@@ -1335,6 +1335,10 @@ public class SlidingUpPanelLayout extends ViewGroup {
         return ss;
     }
 
+    public float getCurrentSlideOffset() {
+        return mSlideOffset;
+    }
+
     @Override
     public void onRestoreInstanceState(Parcelable state) {
         SavedState ss = (SavedState) state;
