@@ -817,7 +817,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
         final int childCount = getChildCount();
 
-        if (mFirstLayout && mSlideOffset == 0) {
+        if (mFirstLayout && mSlideOffset <= 0) {
             switch (mSlideState) {
                 case EXPANDED:
                     mSlideOffset = 1.0f;
