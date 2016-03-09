@@ -1098,8 +1098,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
         if (!isEnabled()
                 || (!mFirstLayout && mSlideableView == null)
-                || state == mSlideState
-                || mSlideState == PanelState.DRAGGING) return;
+                || state == mSlideState) return;
 
         if (mFirstLayout) {
             setPanelStateInternal(state);
@@ -1422,8 +1421,6 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), target);
             invalidate();
-            if (mSlideState == PanelState.DRAGGING)
-                setPanelStateInternal(PanelState.ANCHORED);
         }
 
         @Override
