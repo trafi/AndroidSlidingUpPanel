@@ -1422,6 +1422,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
             mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), target);
             invalidate();
+            if (mSlideState == PanelState.DRAGGING)
+                setPanelStateInternal(PanelState.ANCHORED);
         }
 
         @Override
