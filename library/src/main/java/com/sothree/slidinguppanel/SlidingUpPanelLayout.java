@@ -1098,7 +1098,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
         if (!isEnabled()
                 || (!mFirstLayout && mSlideableView == null)
-                || state == mSlideState) return;
+                || state == mSlideState
+                || mSlideState == PanelState.DRAGGING) return;
 
         if (mFirstLayout) {
             setPanelStateInternal(state);
@@ -1152,6 +1153,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
         setPanelStateInternal(PanelState.DRAGGING);
         // Recompute the slide offset based on the new top position
         mSlideOffset = computeSlideOffset(newTop);
+
+        if (mSlideOffset == 1) {
+            setPanelStateInternal(PanelState.EXPANDED);
+        }
+
         applyParallaxForCurrentSlideOffset();
         // Dispatch the slide event
         dispatchOnPanelSlide(mSlideableView);
