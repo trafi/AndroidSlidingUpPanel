@@ -1023,6 +1023,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 if (!mIsScrollableViewHandlingTouch && mDragHelper.isDragging()) {
                     mDragHelper.cancel();
                     ev.setAction(MotionEvent.ACTION_DOWN);
+                    ev.offsetLocation(0, (mIsSlidingUp ? -1 : 1) * mDragHelper.getTouchSlop());
                 }
 
                 mIsScrollableViewHandlingTouch = true;
