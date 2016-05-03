@@ -50,11 +50,11 @@ public class ScrollableViewHelper {
             if (isSlidingUp) {
                 View firstChild = rv.getChildAt(0);
                 // Approximate the scroll position based on the top child and the first visible item
-                return rv.getChildLayoutPosition(firstChild) * lm.getDecoratedMeasuredHeight(firstChild) - lm.getDecoratedTop(firstChild);
+                return rv.getChildLayoutPosition(firstChild) * lm.getDecoratedMeasuredHeight(firstChild) + rv.getPaddingTop() - lm.getDecoratedTop(firstChild);
             } else {
                 View lastChild = rv.getChildAt(rv.getChildCount() - 1);
                 // Approximate the scroll position based on the bottom child and the last visible item
-                return (rv.getAdapter().getItemCount() - 1) * lm.getDecoratedMeasuredHeight(lastChild) + lm.getDecoratedBottom(lastChild) - rv.getBottom();
+                return (rv.getAdapter().getItemCount() - 1) * lm.getDecoratedMeasuredHeight(lastChild) + lm.getDecoratedBottom(lastChild) + rv.getPaddingBottom() - rv.getBottom();
             }
         } else {
             return 0;
