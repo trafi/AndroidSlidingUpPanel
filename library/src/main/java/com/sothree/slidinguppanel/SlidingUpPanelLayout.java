@@ -943,7 +943,8 @@ public class SlidingUpPanelLayout extends ViewGroup {
     public boolean onTouchEvent(@NonNull MotionEvent ev) {
         final float x = ev.getX();
         final float y = ev.getY();
-        if (!isEnabled() || !isTouchEnabled() || !isViewUnder(mDragView, (int) x, (int) y)) {
+        if (!isEnabled() || !isTouchEnabled() ||
+                (!mDragHelper.isDragging() && !isViewUnder(mDragView, (int) x, (int) y))) {
             return super.onTouchEvent(ev);
         }
         try {
